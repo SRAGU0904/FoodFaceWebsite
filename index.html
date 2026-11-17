@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f3ec" />
+    <meta
+      name="description"
+      content="Create portrait collages with food in the FoodFace studio."
+    />
+    <title data-i18n="title">FoodFace — Portrait Collage Studio</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script src="assets/js/catalog.js" defer></script>
+    <script src="assets/js/portrait-paths.js" defer></script>
+    <script src="assets/js/renderer.js" defer></script>
+    <script src="assets/js/i18n.js" defer></script>
+    <script src="assets/js/app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <h1 class="brand">FoodFace</h1>
+      <div class="header-controls">
+        <div class="language-switch" role="group" aria-label="Language / 语言">
+          <button
+            type="button"
+            data-language="en"
+            lang="en"
+            aria-pressed="true"
+          >
+            English
+          </button>
+          <button
+            type="button"
+            data-language="zh"
+            lang="zh-CN"
+            aria-pressed="false"
+          >
+            中文
+          </button>
+        </div>
+      </div>
+    </header>
+    <main>
+      <section
+        class="task-instructions"
+        aria-label="Play with food"
+        data-i18n-aria-label="task"
+      >
+        <h2 data-i18n="task">Play with food</h2>
+        <p class="collection-notice" data-i18n="collectionNotice">Data collection has ended. This website is now for entertainment only.</p>
+        <p data-i18n="taskGoal">
+          Create a food-face collage through visual association. Use and combine
+          the supplied foods freely to stand in for facial features and capture
+          what is distinctive about the person.
+        </p>
+        <p data-i18n="taskRules">
+          Choose either portrait and combine any of the 16 food items. Reuse them freely, and move, rotate, flip or resize them proportionally.
+        </p>
+        <p data-i18n="resetNotice">Refreshing clears your collages. Nothing is saved automatically.</p>
+        <div class="portrait-selection">
+          <p class="portrait-selection-label" data-i18n="choosePortrait">Choose a portrait</p>
+          <div
+            class="portrait-picker"
+            role="group"
+            aria-label="Choose a portrait"
+            data-i18n-aria-label="choosePortrait"
+          >
+            <button
+              class="portrait-option active"
+              data-portrait="zhu"
+              aria-pressed="true"
+            >
+              <img src="assets/portraits/zhu-original.png" alt="" />
+              <span data-i18n="portrait.zhu">Zhu Yuanzhang</span>
+            </button>
+            <button
+              class="portrait-option"
+              data-portrait="euro"
+              aria-pressed="false"
+            >
+              <img src="assets/portraits/euro-original.png" alt="" />
+              <span data-i18n="portrait.euro">Rudolf II</span>
+            </button>
+          </div>
+        </div>
+      </section>
+      <section
+        class="studio"
+        aria-label="Portrait collage studio"
+        data-i18n-aria-label="studio"
+      >
+        <article class="portrait-panel original-panel">
+          <div class="panel-heading">
+            <h2 data-i18n="original">Original</h2>
+            <span id="portraitName"></span>
+          </div>
+          <div class="picture-frame">
+            <img
+              id="original"
+              src="assets/portraits/zhu-original.png"
+              alt="Zhu Yuanzhang — original"
+            />
+          </div>
+        </article>
+        <article class="portrait-panel collage-panel">
+          <div class="panel-heading">
+            <h2 data-i18n="collage">Collage</h2>
+            <span class="count-pill" id="objectCount">0 items</span>
+          </div>
+          <div class="picture-frame canvas-frame" id="canvasFrame">
+            <canvas
+              id="collage"
+              width="1450"
+              height="1524"
+              tabindex="0"
+              aria-label="Collage canvas. Drag to move, use the lower-right handle to resize, and the top handle to rotate."
+              data-i18n-aria-label="canvas"
+            ></canvas>
+            <button
+              id="deleteHandle"
+              class="delete-handle"
+              aria-label="Delete selected food"
+              data-i18n-aria-label="deleteSelected"
+              title="Delete"
+              data-i18n-title="delete"
+              hidden
+            >
+              ×
+            </button>
+            <button
+              id="flipHorizontalHandle"
+              class="flip-handle"
+              aria-label="Flip selected food horizontally"
+              data-i18n-aria-label="flipHSelected"
+              aria-pressed="false"
+              title="Flip horizontal"
+              data-i18n-title="flipH"
+              hidden
+            >
+              ↔
+            </button>
+            <button
+              id="flipVerticalHandle"
+              class="flip-handle"
+              aria-label="Flip selected food vertically"
+              data-i18n-aria-label="flipVSelected"
+              aria-pressed="false"
+              title="Flip vertical"
+              data-i18n-title="flipV"
+              hidden
+            >
+              ↕
+            </button>
+            <div class="loading" id="loading" data-i18n="loading">Loading…</div>
+          </div>
+          <div class="canvas-actions">
+            <div class="button-group">
+              <button
+                id="undo"
+                class="icon-button"
+                title="Undo (Cmd/Ctrl+Z)"
+                data-i18n-title="undoTitle"
+                aria-label="Undo"
+                data-i18n-aria-label="undo"
+                disabled
+              >
+                ↶
+              </button>
+              <button
+                id="redo"
+                class="icon-button"
+                title="Redo (Cmd/Ctrl+Shift+Z)"
+                data-i18n-title="redoTitle"
+                aria-label="Redo"
+                data-i18n-aria-label="redo"
+                disabled
+              >
+                ↷
+              </button>
+              <span class="toolbar-divider"></span>
+              <button id="clear" class="text-button" disabled data-i18n="clear">
+                Clear
+              </button>
+            </div>
+          </div>
+        </article>
+        <aside
+          class="library"
+          aria-label="Food library"
+          data-i18n-aria-label="library"
+        >
+          <div class="library-heading">
+            <h2 data-i18n="library">Food library</h2>
+          </div>
+          <div class="food-grid" id="foodGrid"></div>
+        </aside>
+      </section>
+      <section
+        class="edit-strip"
+        aria-label="Edit selected food"
+        data-i18n-aria-label="editSelected"
+      >
+        <div class="selection-info">
+          <strong id="selectedName" data-i18n="noSelection"
+            >No selection</strong
+          >
+        </div>
+        <fieldset
+          id="transformControls"
+          aria-label="Transform selected food"
+          data-i18n-aria-label="transformSelected"
+          disabled
+        >
+          <label class="range-control" for="size">
+            <span data-i18n="size">Size</span>
+            <input
+              id="size"
+              type="range"
+              min="3"
+              max="90"
+              step="0.5"
+              value="25"
+            />
+            <output id="sizeValue" for="size">25%</output>
+          </label>
+          <label class="range-control" for="rotation">
+            <span data-i18n="rotation">Rotation</span>
+            <input
+              id="rotation"
+              type="range"
+              min="-180"
+              max="180"
+              step="1"
+              value="0"
+            />
+            <output id="rotationValue" for="rotation">0°</output>
+          </label>
+          <div class="selection-actions">
+            <button
+              id="flipHorizontal"
+              title="Mirror left to right"
+              data-i18n-title="mirrorH"
+              aria-pressed="false"
+              data-i18n="flipH"
+            >
+              Flip horizontal
+            </button>
+            <button
+              id="flipVertical"
+              title="Mirror top to bottom"
+              data-i18n-title="mirrorV"
+              aria-pressed="false"
+              data-i18n="flipV"
+            >
+              Flip vertical
+            </button>
+            <button
+              id="backward"
+              title="Move back one layer"
+              data-i18n-title="backwardTitle"
+              data-i18n="backward"
+            >
+              Backward
+            </button>
+            <button
+              id="forward"
+              title="Move forward one layer"
+              data-i18n-title="forwardTitle"
+              data-i18n="forward"
+            >
+              Forward
+            </button>
+            <button
+              id="duplicate"
+              title="Duplicate (Cmd/Ctrl+D)"
+              data-i18n-title="duplicateTitle"
+              data-i18n="duplicate"
+            >
+              Duplicate
+            </button>
+            <button
+              id="delete"
+              class="delete-button"
+              title="Delete (Delete/Backspace)"
+              data-i18n-title="deleteTitle"
+              data-i18n="delete"
+            >
+              Delete
+            </button>
+          </div>
+        </fieldset>
+      </section>
+      <div class="layers-row">
+        <span data-i18n="layers">Layers</span>
+        <div
+          id="layerList"
+          class="layer-list"
+          role="group"
+          aria-label="Select food on the canvas"
+          data-i18n-aria-label="selectFood"
+        ></div>
+      </div>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div id="dragGhost" class="drag-ghost" hidden></div>
+  </body>
+</html>
